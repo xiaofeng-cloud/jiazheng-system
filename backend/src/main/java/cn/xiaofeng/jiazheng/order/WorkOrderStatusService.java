@@ -9,7 +9,7 @@ public class WorkOrderStatusService {
     private final Map<WorkOrderStatus, Set<WorkOrderStatus>> transitions = Map.of(
             WorkOrderStatus.PENDING_AUDIT, EnumSet.of(WorkOrderStatus.PENDING_ASSIGN, WorkOrderStatus.CANCELLED),
             WorkOrderStatus.PENDING_ASSIGN, EnumSet.of(WorkOrderStatus.PENDING_ACCEPT, WorkOrderStatus.CANCELLED),
-            WorkOrderStatus.PENDING_ACCEPT, EnumSet.of(WorkOrderStatus.ACCEPTED, WorkOrderStatus.CANCELLED),
+            WorkOrderStatus.PENDING_ACCEPT, EnumSet.of(WorkOrderStatus.ACCEPTED, WorkOrderStatus.PENDING_ASSIGN, WorkOrderStatus.CANCELLED),
             WorkOrderStatus.ACCEPTED, EnumSet.of(WorkOrderStatus.IN_SERVICE, WorkOrderStatus.CANCELLED),
             WorkOrderStatus.IN_SERVICE, EnumSet.of(WorkOrderStatus.PENDING_CONFIRM, WorkOrderStatus.CANCELLED),
             WorkOrderStatus.PENDING_CONFIRM, EnumSet.of(WorkOrderStatus.COMPLETED, WorkOrderStatus.IN_SERVICE),

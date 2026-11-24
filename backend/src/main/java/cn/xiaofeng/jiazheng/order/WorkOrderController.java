@@ -26,5 +26,22 @@ public class WorkOrderController {
         service.changeStatus(orderId, request.status(), operatorId, request.remark());
         return ApiResponse.success("工单状态已更新", null);
     }
+
+    @PostMapping("/{orderId}/accept")
+    @PreAuthorize("hasRole('PROVIDER')")
+    public ApiResponse<Void> accept(@PathVariable Long orderId, org.springframework.security.core.Authentication authentication) {
+        service.accept(orderId, ((LoginUser) authentication.getPrincipal()).userId()); return ApiResponse.success("工单已接单", null);
+    }
+    @PostMapping("/{orderId}/reject")
+    @PreAuthorize("hasRole('PROVIDER')")
+    public ApiResponse<Void> reject(@PathVariable Long orderId, @RequestBody(required = false) RejectRequest request, org.springframework.security.core.Authentication authentication) {
+        service.reject(orderId, ((LoginUser) authentication.getPrincipal()).userId(), request == null ? null : request.reason()); return ApiResponse.success("工单已退回调度池", null);
+    }
+    @PostMapping("/{orderId}/cancel")
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public ApiResponse<Void> cancel(@PathVariable Long orderId, @RequestBody(required = false) RejectRequest request, org.springframework.security.core.Authentication authentication) {
+        service.cancelByCustomer(orderId, ((LoginUser) authentication.getPrincipal()).userId(), request == null ? "客户取消" : request.reason()); return ApiResponse.success("工单已取消", null);
+    }
     public record ChangeStatusRequest(@NotNull WorkOrderStatus status, String remark) {}
+    public record RejectRequest(String reason) {}
 }
