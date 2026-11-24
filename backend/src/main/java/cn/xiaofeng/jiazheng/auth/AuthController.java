@@ -21,7 +21,7 @@ public class AuthController {
     public LoginResponse login(@Valid @RequestBody LoginRequest request) {
         var authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.username(), request.password()));
         String roleCode = authentication.getAuthorities().stream().findFirst().map(a -> a.getAuthority().replace("ROLE_", "")).orElse("CUSTOMER");
-        long userId = switch (request.username()) { case "admin" -> 1L; case "customer01" -> 1001L; case "provider01" -> 2001L; default -> 0L; };
+        long userId = authentication.getPrincipal() instanceof LoginUser loginUser ? loginUser.userId() : 0L;
         return new LoginResponse(tokenService.createToken(userId, request.username(), roleCode), request.username(), roleCode);
     }
 

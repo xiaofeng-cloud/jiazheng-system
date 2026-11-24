@@ -4,7 +4,7 @@ spring:
     username: root
     password: 请填写本机MySQL密码
 
-jiazheng:
+security:
   jwt:
     secret: 请替换为至少32位的本地开发密钥
-    expiration-hours: 24
+    expiration-seconds: 86400

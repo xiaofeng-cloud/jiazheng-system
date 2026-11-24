@@ -10,8 +10,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -26,15 +24,6 @@ public class SecurityConfig {
 
     @Bean
     PasswordEncoder passwordEncoder() { return new BCryptPasswordEncoder(); }
-
-    /** 基础阶段提供可运行的演示账号；数据库用户接入后由服务层替换。 */
-    @Bean
-    UserDetailsService userDetailsService(PasswordEncoder encoder) {
-        return new InMemoryUserDetailsManager(
-                org.springframework.security.core.userdetails.User.withUsername("admin").password(encoder.encode("123456")).roles("ADMIN").build(),
-                org.springframework.security.core.userdetails.User.withUsername("customer01").password(encoder.encode("123456")).roles("CUSTOMER").build(),
-                org.springframework.security.core.userdetails.User.withUsername("provider01").password(encoder.encode("123456")).roles("PROVIDER").build());
-    }
 
     @Bean
     AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception { return configuration.getAuthenticationManager(); }
