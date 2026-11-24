@@ -17,7 +17,7 @@
 
 ## 当前开发状态
 
-项目正在按 `docs/superpowers/plans/2026-11-24-jiazheng-system.md` 分阶段实施。每完成一个阶段都会补充测试和文档。
+已完成项目骨架、MySQL 结构与演示数据、JWT 角色认证、工单状态机和中文前端工作台。项目继续按 `docs/superpowers/plans/2026-11-24-jiazheng-system.md` 分阶段实施，每完成一个阶段都会补充测试和文档。
 
 ## 本地环境
 
@@ -28,7 +28,19 @@
 
 ## 启动方式
 
-数据库初始化方式见 `database/README.md`。后端和前端的详细启动命令将在对应阶段补充到本文档。
+先按 `database/README.md` 导入数据库，再复制 `backend/src/main/resources/application-local.yml.example` 为 `application-local.yml`，填写本机 MySQL 密码。
+
+```bash
+cd backend
+mvn spring-boot:run
+
+# 新开终端
+cd frontend
+npm install
+npm run dev
+```
+
+浏览器访问 Vite 输出的地址，演示账号为 `admin`、`customer01`、`provider01`，密码均为 `123456`。后端接口清单见 `docs/后端接口说明.md`。
 
 ## 中文代码说明
 
