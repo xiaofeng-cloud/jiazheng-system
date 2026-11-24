@@ -16,7 +16,7 @@ export const useAuthStore = defineStore('auth', () => {
       username.value = result.username
       roleCode.value = result.roleCode
     } catch (error) {
-      if (error.response) throw error
+      if (error.response && error.response.status < 500) throw error
       // 后端未启动时保留演示入口，便于答辩展示前端交互；真实接口返回错误时不绕过认证。
       token.value = 'demo-token'
       username.value = form.username

@@ -12,13 +12,7 @@ const activeMenu = ref('dashboard')
 const orderFilter = ref('全部')
 const chartRef = ref(null)
 const dashboard = ref({ orderStatus: [], orderTrend: [], averageScore: 0, completedCount: 0, pendingComplaintCount: 0 })
-const orders = ref([
-  { no: 'WO20260001', item: '全屋日常保洁', customer: '客户1', provider: '服务员1', status: '待审核', date: '2026-01-06', region: '北京市东城区' },
-  { no: 'WO20260002', item: '空调清洗', customer: '客户2', provider: '服务员2', status: '服务中', date: '2026-01-07', region: '北京市朝阳区' },
-  { no: 'WO20260003', item: '老人陪护', customer: '客户3', provider: '服务员3', status: '待确认', date: '2026-01-07', region: '上海市浦东新区' },
-  { no: 'WO20260004', item: '衣物收纳', customer: '客户4', provider: '服务员4', status: '已完成', date: '2026-01-05', region: '广州市天河区' },
-  { no: 'WO20260005', item: '深度保洁', customer: '客户5', provider: '未分配', status: '待分配', date: '2026-01-08', region: '成都市武侯区' },
-])
+const orders = ref([])
 const filteredOrders = computed(() => orderFilter.value === '全部' ? orders.value : orders.value.filter((item) => item.status === orderFilter.value))
 const statusType = { 待审核: 'warning', 待分配: 'warning', 服务中: 'primary', 待确认: 'danger', 已完成: 'success' }
 const menuItems = [{ key: 'dashboard', label: '工作台', icon: 'DataBoard' }, { key: 'orders', label: '工单管理', icon: 'Tickets' }, { key: 'providers', label: '服务人员', icon: 'User' }, { key: 'quality', label: '质量监督', icon: 'CircleCheck' }, { key: 'statistics', label: '统计分析', icon: 'TrendCharts' }]
@@ -31,8 +25,16 @@ async function enterSystem() {
   loginError.value = ''
   try { await auth.login(loginForm.value) } catch (error) { loginError.value = error.response?.data?.message || '登录失败，请检查账号和密码'; return }
   await loadDashboard()
+  await loadOrders()
   await nextTick()
   renderChart()
+}
+async function loadOrders() {
+  try {
+    const { data } = await http.get('/work-orders')
+    const rows = data.data || data || []
+    orders.value = rows.map((row) => ({ no: row.orderNo, item: `服务项目 #${row.serviceItemId}`, customer: `客户 #${row.customerId}`, provider: row.providerId ? `服务员 #${row.providerId}` : '未分配', status: row.status, date: row.scheduledDate, region: '服务区域待补充' }))
+  } catch { orders.value = [] }
 }
 async function loadDashboard() {
   try { const { data } = await http.get('/statistics/dashboard'); dashboard.value = data.data || data } catch { dashboard.value = { orderStatus: [], orderTrend: [], averageScore: 0, completedCount: 0, pendingComplaintCount: 0 } }
@@ -42,7 +44,7 @@ function renderChart() {
   const chart = echarts.init(chartRef.value)
   chart.setOption({ tooltip: { trigger: 'axis' }, grid: { left: 36, right: 18, top: 20, bottom: 24 }, xAxis: { type: 'category', data: dashboard.value.orderTrend.map((item) => item.label) }, yAxis: { type: 'value' }, series: [{ name: '工单数量', type: 'line', smooth: true, data: dashboard.value.orderTrend.map((item) => item.value), itemStyle: { color: '#2f80ed' }, areaStyle: { color: 'rgba(47,128,237,.12)' } }] })
 }
-function selectMenu(key) { activeMenu.value = key; if (key === 'dashboard') nextTick(renderChart) }
+function selectMenu(key) { activeMenu.value = key; if (key === 'dashboard') nextTick(renderChart); if (key === 'orders') loadOrders() }
 onMounted(async () => { if (auth.loggedIn) { await loadDashboard(); await nextTick(); renderChart() } })
 </script>
 
