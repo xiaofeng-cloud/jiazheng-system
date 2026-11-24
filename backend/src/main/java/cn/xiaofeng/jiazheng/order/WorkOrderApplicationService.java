@@ -15,7 +15,7 @@ public class WorkOrderApplicationService {
 
     @Transactional
     public void changeStatus(Long orderId, WorkOrderStatus target, Long operatorId, String remark) {
-        WorkOrderMapper.WorkOrderRow row = orderMapper.findStatus(orderId);
+        WorkOrderMapper.StatusRow row = orderMapper.findStatus(orderId);
         if (row == null) throw new IllegalArgumentException("工单不存在");
         WorkOrderStatus from = parse(row.status());
         statusService.validateTransition(from, target);

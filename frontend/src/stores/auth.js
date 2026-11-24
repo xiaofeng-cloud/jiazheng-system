@@ -11,11 +11,13 @@ export const useAuthStore = defineStore('auth', () => {
   async function login(form) {
     try {
       const { data } = await http.post('/auth/login', form)
-      token.value = data.token
-      username.value = data.username
-      roleCode.value = data.roleCode
-    } catch {
-      // 后端未启动时保留演示入口，便于答辩展示前端交互。
+      const result = data.data || data
+      token.value = result.token
+      username.value = result.username
+      roleCode.value = result.roleCode
+    } catch (error) {
+      if (error.response) throw error
+      // 后端未启动时保留演示入口，便于答辩展示前端交互；真实接口返回错误时不绕过认证。
       token.value = 'demo-token'
       username.value = form.username
       roleCode.value = form.username === 'provider01' ? 'PROVIDER' : form.username === 'customer01' ? 'CUSTOMER' : 'ADMIN'

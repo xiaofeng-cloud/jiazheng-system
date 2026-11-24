@@ -8,6 +8,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
+import cn.xiaofeng.jiazheng.auth.LoginUser;
 
 import java.io.IOException;
 import java.util.List;
@@ -25,7 +26,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (header != null && header.startsWith("Bearer ")) {
             try {
                 JwtTokenService.TokenClaims claims = tokenService.parseToken(header.substring(7));
-                var auth = new UsernamePasswordAuthenticationToken(claims.username(), null,
+                var auth = new UsernamePasswordAuthenticationToken(new LoginUser(claims.userId(), claims.username(), "", claims.roleCode()), null,
                         List.of(new SimpleGrantedAuthority("ROLE_" + claims.roleCode())));
                 SecurityContextHolder.getContext().setAuthentication(auth);
             } catch (RuntimeException ignored) {
