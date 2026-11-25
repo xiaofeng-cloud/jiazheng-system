@@ -25,3 +25,9 @@ Thumbs.db
 
 # Superpowers planning workspace
 .superpowers/sdd/
+
+# Presentation build validation intermediates
+.codex-finalizer/
+.chart-data-*/
+docs/答辩材料/答辩PPT.pptx.inspect.ndjson
+docs/答辩材料/答辩PPT.pptx
